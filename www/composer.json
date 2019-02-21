@@ -1,0 +1,15 @@
+{
+  "name": "eivitskiy/drom",
+  "description": "Test work for the post of PHP-developer",
+  "type": "project",
+  "minimum-stability": "dev",
+  "require": {
+    "php": "^7"
+  },
+  "autoload": {
+    "classmap": [
+      "core",
+      "application"
+    ]
+  }
+}
