@@ -4,7 +4,7 @@ services:
   db:
     image: mysql:5.6
     volumes:
-      - ./mysql:/var/lib/mysql
+      - ./mysql:/var/lib/mysql:z
     environment:
       MYSQL_ROOT_PASSWORD: secret
       MYSQL_DATABASE: drom_db
@@ -17,18 +17,22 @@ services:
     build: ./php
     depends_on:
       - db
-    volumes:
-      - ./www:/var/www/html/
-      - ./apache2:/etc/apache2/sites-available/
     ports:
       - 80:80
-
-
+    volumes:
+      - ./www:/var/www/html/:z
+      - ./apache2:/etc/apache2/sites-available/
   node:
     image: node:latest
     environment: 
       NODE_ENV: development
-    working_dir: /home/www/public
+    working_dir: /var/www/html/public
     volumes:
-      - ./www/public:/home/www/public
+      - ./www/public:/var/www/html/public
     command: npm install
+  composer:
+    image: composer:latest
+    working_dir: /var/www/html
+    volumes:
+      - ./www:/var/www/html/
+    command: composer install
