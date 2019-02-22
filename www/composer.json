@@ -4,12 +4,15 @@
   "type": "project",
   "minimum-stability": "dev",
   "require": {
-    "php": "^7"
+    "php": "^7",
+    "doctrine/orm": "^2.6.2",
+    "symfony/yaml": "2.*"
   },
   "autoload": {
     "classmap": [
       "core",
       "application"
-    ]
+    ],
+    "psr-0": {"": "src/"}
   }
 }

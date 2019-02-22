@@ -4,7 +4,7 @@ namespace core;
 
 class App
 {
-    public static $kernel, $router, $db;
+    public static $kernel, $router;
 
     /**
      * @throws \Exception
@@ -13,12 +13,12 @@ class App
     {
         self::$kernel = new Kernel();
         self::$router = new Router();
-//        self::$db = new DB();
 
         try {
             self::$kernel->launch();
         } catch (\Exception $e) {
             //todo: exception to log file
+            //throw $e;
 
             header("HTTP/1.0 404 Not Found");
             echo file_get_contents(APP_PATH . 'views/404.html');

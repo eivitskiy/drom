@@ -4,11 +4,14 @@ namespace core;
 
 class BaseController
 {
-    public $view;
+    public $view, $entityManager;
 
     public function __construct()
     {
         $this->view = new BaseView();
+
+        $db = new DB();
+        $this->entityManager = $db->entityManager;
     }
 
     protected function response($data, $code = 200, $json = true)
