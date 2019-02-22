@@ -8,30 +8,11 @@ class User
     /** @Id @Column(type="integer") @GeneratedValue **/
     protected $id;
 
-    /** @Column(type="string") **/
-    protected $name;
-
-    /** @Column(type="string")  **/
+    /** @Column(type="string", unique=true, nullable=false) **/
     protected $email;
 
-    /** @Column(type="string") **/
-    protected $token;
-
-    /**
-     * @return mixed
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * @param mixed $name
-     */
-    public function setName($name): void
-    {
-        $this->name = $name;
-    }
+    /** @Column(type="string", length=32) **/
+    protected $password;
 
     /**
      * @return mixed
@@ -52,18 +33,16 @@ class User
     /**
      * @return mixed
      */
-    public function getToken()
+    public function getPassword()
     {
-        return $this->token;
+        return $this->password;
     }
 
     /**
-     * @param mixed $token
+     * @param mixed $password
      */
-    public function setToken($token): void
+    public function setPassword($password): void
     {
-        $this->token = $token;
+        $this->password = $password;
     }
-
-
 }

@@ -2,16 +2,26 @@
 
 namespace core;
 
-class BaseController
+use Doctrine\ORM\ORMException;
+
+abstract class BaseController
 {
     public $view, $entityManager;
 
+    /**
+     * BaseController constructor.
+     * @throws ORMException
+     */
     public function __construct()
     {
         $this->view = new BaseView();
 
-        $db = new DB();
-        $this->entityManager = $db->entityManager;
+        try {
+            $db = new DB();
+            $this->entityManager = $db->entityManager;
+        } catch (ORMException $e) {
+            throw $e;
+        }
     }
 
     protected function response($data, $code = 200, $json = true)

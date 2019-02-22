@@ -11,6 +11,8 @@ class App
      */
     public static function init()
     {
+        session_start();
+
         self::$kernel = new Kernel();
         self::$router = new Router();
 
