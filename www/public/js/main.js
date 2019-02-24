@@ -25,6 +25,15 @@ $(document).ready(function () {
         });
     });
 
+    // отмечаем одну как выполненную
+    $(document).on('click', 'input.toggle[type="checkbox"]', function () {
+        if($(this).prop('checked')) {
+            $(this).parent().parent().addClass('completed');
+        } else {
+            $(this).parent().parent().removeClass('completed');
+        }
+    });
+
     // добавление новой задачи
     $('input.new-todo').on('keypress', function (e) {
         if (e.which === 13) {
@@ -41,7 +50,7 @@ $(document).ready(function () {
 
                     todoItemTemplate = todoItemTemplate.replace('<%-id-%>', response.id);
 
-                    $.each(todoItemTemplate.match( /<%-title-%>/ig ), function() {
+                    $.each(todoItemTemplate.match(/<%-title-%>/ig), function () {
                         todoItemTemplate = todoItemTemplate.replace('<%-title-%>', response.task);
                     });
 
@@ -50,6 +59,8 @@ $(document).ready(function () {
                     $('ul.todo-list').append(todoItemTemplate);
 
                     todoInputElem.val(null);
+
+                    updateItemsCount();
                 },
                 error: function (response) {
                     console.error(response)
@@ -84,20 +95,73 @@ $(document).ready(function () {
 
     // удаление задачи
     $(document).on('click', 'ul.todo-list > li > div.view > button.destroy', function () {
-        let liTodoElem = $(this).parent().parent();
-        $.post({
-            url: '/todos/delete',
-            data: {
-                id: liTodoElem.attr('data-id')
-            },
-            success: function (response) {
-                liTodoElem.remove();
-            },
-            error: function (response) {
-                console.error(response)
-            }
+        removeTodoElem($(this).parent().parent());
+
+        // let liTodoElem = $(this).parent().parent();
+        // $.post({
+        //     url: '/todos/delete',
+        //     data: {
+        //         id: liTodoElem.attr('data-id')
+        //     },
+        //     success: function (response) {
+        //         liTodoElem.remove();
+        //
+        //         updateItemsCount();
+        //     },
+        //     error: function (response) {
+        //         console.error(response);
+        //     }
+        // });
+    });
+
+    // фильтры
+    $('ul.filters a').click(function (e) {
+        e.preventDefault();
+
+        $('ul.filters a.selected').removeClass('selected');
+        $(this).addClass('selected');
+
+        $('ul.todo-list li').show();
+
+        switch ($(this).attr('href')) {
+            case '#/active':
+                $('ul.todo-list li.completed').hide();
+                break;
+            case '#/completed':
+                $('ul.todo-list li:not(.completed)').hide();
+                break;
+        }
+
+        updateItemsCount();
+    });
+
+    // удалить выполненные
+    $('button.clear-completed').click(function () {
+        let completedLiElems = $('ul.todo-list > li.completed');
+        $.each(completedLiElems, function (k, v) {
+            removeTodoElem($(v));
         });
     });
 
-
 });
+
+function removeTodoElem(elem) {
+    $.post({
+        url: '/todos/delete',
+        data: {
+            id: elem.attr('data-id')
+        },
+        success: function (response) {
+            elem.remove();
+
+            updateItemsCount();
+        },
+        error: function (response) {
+            console.error(response);
+        }
+    });
+}
+
+function updateItemsCount() {
+    $('span.todo-count').find('strong').get(0).innerText = $('ul.todo-list > li:visible').length;
+}
