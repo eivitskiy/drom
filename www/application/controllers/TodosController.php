@@ -69,20 +69,27 @@ class TodosController extends BaseController
         }
 
         $todo = $this->entityManager->getRepository('Todo')->find($post['id']);
-        if(isset($post['task'])) { $todo->setTask($post['task']);}
-        if(isset($post['done'])) { $todo->setDone($post['done']);}
 
-        $this->entityManager->persist($todo);
-        $this->entityManager->flush();
+        if($todo->getUser() == $this->user) {
+            if (isset($post['task'])) {
+                $todo->setTask($post['task']);
+            }
+            if (isset($post['done'])) {
+                $todo->setDone($post['done']);
+            }
 
-        $data = [
-            'id' => $todo->getId(),
-            'task' => $todo->getTask(),
-            'done' => $todo->getDone()
-        ];
+            $this->entityManager->persist($todo);
+            $this->entityManager->flush();
 
-        header('Content-Type: application/json');
-        return json_encode($data);
+            $data = [
+                'id' => $todo->getId(),
+                'task' => $todo->getTask(),
+                'done' => $todo->getDone()
+            ];
+
+            header('Content-Type: application/json');
+            return json_encode($data);
+        }
     }
 
     /**
@@ -99,11 +106,13 @@ class TodosController extends BaseController
 
         $todo = $this->entityManager->getRepository('Todo')->find($post['id']);
 
-        $this->entityManager->remove($todo);
-        $this->entityManager->flush();
+        if($todo->getUser() == $this->user) {
+            $this->entityManager->remove($todo);
+            $this->entityManager->flush();
 
-        header('Content-Type: application/json');
-        return json_encode(['status' => true]);
+            header('Content-Type: application/json');
+            return json_encode(['status' => true]);
+        }
     }
 
     /**
