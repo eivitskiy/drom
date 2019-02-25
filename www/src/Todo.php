@@ -3,13 +3,10 @@
 /**
  * @Entity @Table(name="todos")
  **/
-class Todos
+class Todo
 {
     /** @Id @Column(type="integer") @GeneratedValue **/
     protected $id;
-
-    /** @Column(type="integer", nullable=false) **/
-    protected $user_id;
 
     /** @Column(type="string", nullable=false) **/
     protected $task;
@@ -20,17 +17,9 @@ class Todos
     /**
      * @return mixed
      */
-    public function getUserId()
+    public function getId()
     {
-        return $this->user_id;
-    }
-
-    /**
-     * @param mixed $user_id
-     */
-    public function setUserId($user_id): void
-    {
-        $this->user_id = $user_id;
+        return $this->id;
     }
 
     /**
@@ -65,5 +54,14 @@ class Todos
         $this->done = $done;
     }
 
+    /**
+     * @ManyToOne(targetEntity="User", inversedBy="todos")
+     * @JoinColumn(name="user_id", referencedColumnName="id")
+     */
+    protected $user;
 
+    public function setUser(User $user)
+    {
+        $this->user = $user;
+    }
 }

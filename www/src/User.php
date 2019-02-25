@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * @Entity @Table(name="users")
  **/
@@ -13,6 +14,14 @@ class User
 
     /** @Column(type="string", length=32) **/
     protected $password;
+
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
      * @return mixed
@@ -44,5 +53,18 @@ class User
     public function setPassword($password): void
     {
         $this->password = $password;
+    }
+
+    /**
+     * @OneToMany(targetEntity="Todo", mappedBy="user")
+     */
+    protected $todos;
+
+    /**
+     * @return mixed
+     */
+    public function getTodos()
+    {
+        return $this->todos;
     }
 }

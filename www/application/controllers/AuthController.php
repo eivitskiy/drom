@@ -2,9 +2,7 @@
 
 namespace application\controllers;
 
-
 use core\BaseController;
-use models\User;
 
 class AuthController extends BaseController
 {
@@ -13,7 +11,7 @@ class AuthController extends BaseController
      */
     public function index($values = [], $errors = [])
     {
-        if (isset($_SESSION['user'])) {
+        if (isset($_SESSION['user_id'])) {
             header('Location: /');
             exit();
         }
@@ -56,9 +54,9 @@ class AuthController extends BaseController
                 $values['email'] = $post['email'];
                 $errors = $validation_errors;
             } else {
-                if ($user = (new User())->getByEmail($post['email'])) {
+                if ($user = $this->entityManager->getRepository('User')->findOneByEmail($post['email'])) {
                     if (md5($post['password']) == $user->getPassword()) {
-                        $_SESSION['user'] = $user;
+                        $_SESSION['user_id'] = $user->getId();
                         header('Location: /');
                         exit();
                     } else {
@@ -79,7 +77,7 @@ class AuthController extends BaseController
      */
     public function register()
     {
-        if (isset($_SESSION['user'])) {
+        if (isset($_SESSION['user_id'])) {
             header('Location: /');
             exit();
         }
@@ -97,7 +95,7 @@ class AuthController extends BaseController
                 $values['email'] = $post['email'];
                 $errors = $validation_errors;
             } else {
-                if ((new User())->getByEmail($post['email'])) {
+                if ($this->entityManager->getRepository('User')->findOneByEmail($post['email'])) {
                     $values['email'] = $post['email'];
                     $errors['email'] = 'Пользователь с таким email уже зарегистрирован';
                 } else {
@@ -107,7 +105,7 @@ class AuthController extends BaseController
                     $this->entityManager->persist($user);
                     $this->entityManager->flush();
 
-                    $_SESSION['user'] = $user;
+                    $_SESSION['user_id'] = $user->getId();
                     header('Location: /');
                     exit();
                 }
@@ -136,7 +134,7 @@ class AuthController extends BaseController
 
     public function logout()
     {
-        unset($_SESSION['user']);
+        unset($_SESSION['user_id']);
         header('Location: /auth/login');
         exit();
     }
