@@ -6,13 +6,19 @@ use core\BaseController;
 
 class MainController extends BaseController
 {
+    private $user;
+
     public function __construct()
     {
         parent::__construct();
 
-        if (!isset($_SESSION['user'])) {
+        if (!isset($_SESSION['user_id'])) {
             header('Location: /auth/login');
             exit();
+        } else {
+            $this->user = $this->entityManager
+                ->getRepository('User')
+                ->find($_SESSION['user_id']);
         }
     }
 
@@ -28,26 +34,17 @@ class MainController extends BaseController
         ];
         $js = [
             'https://code.jquery.com/jquery-2.2.4.min.js',
-//            '/node_modules/todomvc-common/base.js',
-//            '/node_modules/jquery/dist/jquery.js',
-//            '/node_modules/underscore/underscore.js',
-//            '/node_modules/backbone/backbone.js',
-//            '/node_modules/backbone.localstorage/backbone.localStorage.js',
-//            '/js/models/todo.js',
-//            '/js/collections/todos.js',
-//            '/js/views/todo-view.js',
-//            '/js/views/app-view.js',
-//            '/js/routers/router.js',
             '/js/app.js',
             '/js/app.js',
             '/js/main.js'
         ];
 
+        $todos = $this->user->getTodos()->toArray();
+
         $this->view->generate('main', [
-            'title' => 'Заголовок',
-            'content' => 'содержимое',
             'css' => $css,
-            'js' => $js
+            'js' => $js,
+            'todos' => $todos
         ]);
     }
 }

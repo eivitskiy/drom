@@ -9,49 +9,22 @@
         <label for="toggle-all">Mark all as complete</label>
         <ul class="todo-list">
 
-<!--            --><?php //foreach($todos as $todo): ?>
-<!--            <li>-->
-<!--                <div class="view">-->
-<!--                    <input class="toggle" type="checkbox">-->
-<!--                    <label>--><?php //echo $todo->getTodo() ?><!--</label>-->
-<!--                    <button class="destroy"></button>-->
-<!--                </div>-->
-<!--                <input class="edit" value="--><?php //echo $todo->getTodo() ?><!--">-->
-<!--            </li>-->
-<!--            --><?php //endforeach ?>
-
-            <!-- These are here just to show the structure of the list items -->
-            <!-- List items should get the class `editing` when editing and `completed` when marked as completed -->
-            <li class="completed" data-id="1">
+            <?php foreach($todos as $todo): ?>
+            <li <?php echo ($todo->getDone() ? 'class="completed"' : null) ?> data-id="<?php echo $todo->getId() ?>">
                 <div class="view">
-                    <input class="toggle" type="checkbox" checked>
-                    <label>Taste JavaScript</label>
+                    <input class="toggle" type="checkbox" <?php echo ($todo->getDone() ? 'checked' : null) ?>>
+                    <label><?php echo $todo->getTask() ?></label>
                     <button class="destroy"></button>
                 </div>
-                <input class="edit" value="Create a TodoMVC template">
+                <input class="edit" value="<?php echo $todo->getTask() ?>">
             </li>
-            <li data-id="2">
-                <div class="view">
-                    <input class="toggle" type="checkbox">
-                    <label>Buy a unicorn</label>
-                    <button class="destroy"></button>
-                </div>
-                <input class="edit" value="Buy a unicorn">
-            </li>
-            <li data-id="3">
-                <div class="view">
-                    <input class="toggle" type="checkbox">
-                    <label>Rule the web</label>
-                    <button class="destroy"></button>
-                </div>
-                <input class="edit" value="Rule the web">
-            </li>
+            <?php endforeach ?>
         </ul>
     </section>
     <!-- This footer should hidden by default and shown when there are todos -->
     <footer class="footer">
         <!-- This should be `0 items left` by default -->
-        <span class="todo-count"><strong>0</strong> item left</span>
+        <span class="todo-count"><strong><?php echo count($todos) ?></strong> item left</span>
         <!-- Remove this if you don't implement routing -->
         <ul class="filters">
             <li>

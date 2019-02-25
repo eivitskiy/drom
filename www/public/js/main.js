@@ -27,11 +27,10 @@ $(document).ready(function () {
 
     // отмечаем одну как выполненную
     $(document).on('click', 'input.toggle[type="checkbox"]', function () {
-        if($(this).prop('checked')) {
-            $(this).parent().parent().addClass('completed');
-        } else {
-            $(this).parent().parent().removeClass('completed');
-        }
+        let liTodoElem = $(this).parent().parent();
+        let editElem = liTodoElem.find('input.edit');
+
+        saveEditedTodo(liTodoElem, editElem);
     });
 
     // добавление новой задачи
@@ -76,42 +75,19 @@ $(document).ready(function () {
 
         let editElem = liTodoElem.find('input.edit');
         editElem.focus().focusout(function () {
-            $.post({
-                url: '/todos/update',
-                data: {
-                    id: liTodoElem.attr('data-id'),
-                    task: editElem.val()
-                },
-                success: function (response) {
-                    liTodoElem.find('label').get(0).innerHTML = response.task;
-                    liTodoElem.removeClass('editing');
-                },
-                error: function (response) {
-                    console.error(response)
-                }
-            });
+            saveEditedTodo(liTodoElem, editElem)
+        });
+
+        editElem.on('keypress', function (e) {
+            if (e.which === 13) {
+                saveEditedTodo(liTodoElem, editElem)
+            }
         });
     });
 
     // удаление задачи
     $(document).on('click', 'ul.todo-list > li > div.view > button.destroy', function () {
         removeTodoElem($(this).parent().parent());
-
-        // let liTodoElem = $(this).parent().parent();
-        // $.post({
-        //     url: '/todos/delete',
-        //     data: {
-        //         id: liTodoElem.attr('data-id')
-        //     },
-        //     success: function (response) {
-        //         liTodoElem.remove();
-        //
-        //         updateItemsCount();
-        //     },
-        //     error: function (response) {
-        //         console.error(response);
-        //     }
-        // });
     });
 
     // фильтры
@@ -144,6 +120,29 @@ $(document).ready(function () {
     });
 
 });
+
+function saveEditedTodo(liTodoElem, editElem) {
+    $.post({
+        url: '/todos/update',
+        data: {
+            id: liTodoElem.attr('data-id'),
+            task: editElem.val(),
+            done: liTodoElem.find('input[type="checkbox"]').prop('checked')
+        },
+        success: function (response) {
+            liTodoElem.find('label').get(0).innerHTML = response.task;
+            liTodoElem.removeClass('editing');
+            if (response.done) {
+                liTodoElem.addClass('completed');
+            } else {
+                liTodoElem.removeClass('completed');
+            }
+        },
+        error: function (response) {
+            console.error(response)
+        }
+    });
+}
 
 function removeTodoElem(elem) {
     $.post({
