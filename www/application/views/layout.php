@@ -13,6 +13,10 @@
     <?php endif ?>
 </head>
 <body>
+    <a href="/auth/logout" style="float:right; z-index:1; padding:5px; position:relative">
+        Выйти из системы
+    </a>
+
     <?php include($viewTemplate) ?>
 
     <?php if(isset($js)): ?>
